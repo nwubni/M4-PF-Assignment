@@ -1,0 +1,140 @@
+BANK POLICIES AND PROCEDURES
+
+ACCOUNT OPENING POLICIES
+
+Identification Requirements
+All new account holders must provide valid government-issued photo identification (driver's license, passport, or state ID). Secondary identification may be required (utility bill, bank statement, or lease agreement). Social Security Number or Tax Identification Number is required for all accounts. Non-U.S. residents must provide additional documentation including visa status and proof of address.
+
+Account Ownership Types
+Individual accounts: Single account holder with full control. Joint accounts: Two or more owners with rights of survivorship. Trust accounts: Require trust documentation and trustee identification. Business accounts: Require business registration documents, EIN, and authorized signer information. Minor accounts: Require parent or guardian as joint owner until account holder reaches age of majority.
+
+Initial Deposit Requirements
+Checking accounts: Minimum $25 initial deposit required. Savings accounts: Minimum $25 initial deposit required. Money market accounts: Minimum $1,000 initial deposit required. Certificate of Deposit: Minimum $1,000 initial deposit required. Premium accounts: Minimum $10,000 initial deposit required.
+
+DEPOSIT POLICIES
+
+Fund Availability Policy
+Cash deposits: Available immediately. Electronic direct deposits: Available on the day we receive the deposit. Check deposits: First $200 available next business day, remainder available on second business day. Large checks (over $5,000): May be subject to extended hold periods up to 7 business days. Foreign checks: May take up to 14 business days to clear.
+
+Check Deposit Guidelines
+All checks must be properly endorsed. Mobile check deposit limits: $5,000 per day, $10,000 per month. Checks must be deposited within 180 days of issue date. Post-dated checks may be processed early. Stale-dated checks (over 6 months) may be returned unpaid.
+
+WITHDRAWAL POLICIES
+
+Withdrawal Limits
+ATM daily withdrawal limit: $500 (can be increased upon request). Teller withdrawal limit: No limit with proper identification. Online transfer limit: $10,000 per day. Wire transfer: No limit with proper verification. Large cash withdrawals (over $10,000) require advance notice and may be subject to reporting requirements.
+
+Cash Withdrawal Procedures
+For withdrawals over $3,000, advance notice of 24 hours is recommended. Identification required for all teller transactions. Third-party withdrawals require written authorization or power of attorney. Business account withdrawals require proper authorization per account agreement.
+
+OVERDRAFT POLICIES
+
+Overdraft Protection Options
+Automatic transfer from linked savings account: $5 transfer fee per transaction. Overdraft line of credit: Interest charged on outstanding balance, $25 annual fee. Standard overdraft coverage: $35 fee per item that overdraws account. Opt-out option available for debit card transactions (ATM and one-time debit card purchases will be declined if insufficient funds).
+
+Overdraft Fee Structure
+Overdraft fee: $35 per item. Extended overdraft fee: $35 if account remains overdrawn for more than 5 consecutive business days. Maximum of 4 overdraft fees per day. Fees are charged when account balance goes below zero.
+
+PRIVACY AND SECURITY POLICIES
+
+Privacy Policy
+We collect information necessary to provide banking services and comply with legal requirements. We do not sell customer information to third parties. We share information only as necessary to process transactions, prevent fraud, and comply with legal obligations. Customers can opt out of certain information sharing for marketing purposes. Annual privacy notices are mailed to all account holders.
+
+Data Security Measures
+Multi-factor authentication required for online banking access. Encryption of all online transactions and communications. Regular security monitoring and fraud detection systems. Secure storage of customer information. Compliance with industry security standards (PCI DSS, etc.).
+
+Identity Theft Protection
+Zero-liability policy for unauthorized debit card transactions when reported promptly. Fraud monitoring and alerts available. Free credit monitoring services for premium account holders. Identity theft resolution assistance provided. Immediate card freeze capability through mobile app.
+
+FEE POLICIES
+
+Monthly Maintenance Fees
+Standard checking: $12/month (waived with $1,500 minimum balance, $500+ direct deposits, or student status). Premium checking: $25/month (waived with $10,000 minimum balance). Savings account: $5/month (waived with $300 minimum balance). Money market: $15/month (waived with $2,500 minimum balance).
+
+Transaction Fees
+Out-of-network ATM: $3.00 per transaction (up to $10/month reimbursed for premium accounts). Wire transfers: $25 domestic outgoing, $15 domestic incoming, $45 international outgoing, $15 international incoming. Stop payment: $35 per request. Returned item: $35 per item. Account research: $25 per hour (minimum 1 hour).
+
+Fee Waiver Eligibility
+Students with valid student ID: All monthly fees waived. Seniors (age 65+): Reduced or waived fees on select accounts. Military members: Special fee structure and benefits. Direct deposit customers: Monthly fees waived on qualifying accounts. High-balance accounts: Fee waivers based on relationship balance.
+
+LOAN POLICIES
+
+Loan Application Requirements
+Proof of income (pay stubs, tax returns, or bank statements). Employment verification. Credit history review. Debt-to-income ratio analysis. Collateral documentation for secured loans. Minimum credit score requirements vary by loan type.
+
+Interest Rate Policies
+Rates are determined based on creditworthiness, loan amount, term, and market conditions. Fixed-rate loans: Rate locked for entire loan term. Variable-rate loans: Rate adjusts based on prime rate or other index. Rate lock periods available for mortgage loans (typically 30-60 days).
+
+Loan Terms and Conditions
+Personal loans: Terms from 12 to 84 months. Auto loans: Terms up to 84 months for new vehicles, 60 months for used. Mortgage loans: Terms of 15, 20, or 30 years available. Early payoff penalties: None for personal or auto loans; may apply to some mortgage products.
+
+CREDIT CARD POLICIES
+
+Credit Card Application
+Credit score requirements: Minimum 650 for standard cards, 720+ for premium cards. Income verification required. Credit limit based on creditworthiness and income. Co-signers not accepted for credit cards.
+
+Interest Rates and Fees
+APR ranges from 12.99% to 24.99% based on creditworthiness. Annual fees: $0 for standard cards, $95-$550 for premium cards. Late payment fee: Up to $40. Over-limit fee: Up to $40. Cash advance fee: 5% of amount (minimum $10). Cash advance APR: Typically 25.99%.
+
+Rewards Program
+Points earned on eligible purchases (typically 1-3 points per dollar). Points can be redeemed for cash back, travel, gift cards, or merchandise. Points expire after 24 months of account inactivity. Annual spending caps may apply to bonus categories.
+
+ONLINE AND MOBILE BANKING POLICIES
+
+Online Banking Terms
+Users must keep login credentials confidential. Users are responsible for all transactions made with their credentials. Multi-factor authentication required for certain transactions. Session timeout after 15 minutes of inactivity. Account alerts available for various transaction types.
+
+Mobile Banking Security
+Biometric authentication (fingerprint, face ID) available. Remote deposit limits and restrictions apply. Lost or stolen device reporting required immediately. App updates required for security patches. Location-based fraud detection enabled.
+
+Electronic Communication
+Statements available electronically (paper statements available for $2/month fee). Email notifications for account activity. Text message alerts available (standard messaging rates may apply). Secure messaging through online banking platform.
+
+DISPUTE RESOLUTION POLICIES
+
+Error Resolution Procedures
+Customers have 60 days to report errors on statements. Written notice required for billing errors. Bank must acknowledge receipt within 30 days. Investigation must be completed within 90 days (or 2 billing cycles for credit cards). Provisional credit may be provided during investigation.
+
+Unauthorized Transaction Protection
+Zero-liability policy for unauthorized debit card transactions when reported within 60 days. Credit card unauthorized charges: Maximum liability $50 if reported within 60 days. Immediate reporting required for maximum protection. Card replacement provided at no charge.
+
+ACCOUNT CLOSURE POLICIES
+
+Account Closure Procedures
+Accounts may be closed by customer at any time with no penalty. Written request recommended but not required for most accounts. Remaining balance will be returned via check or transfer. All outstanding transactions must clear before closure. CDs may be closed early with penalty (typically 6 months of interest).
+
+Bank-Initiated Closures
+Bank may close accounts for: Repeated overdrafts, fraudulent activity, violation of account agreement, inactivity for extended periods (typically 12+ months with zero balance), or legal/regulatory requirements. Advance notice provided when possible (except for fraud or legal issues).
+
+COMPLIANCE POLICIES
+
+Anti-Money Laundering (AML)
+Suspicious activity reporting as required by law. Currency transaction reporting for cash transactions over $10,000. Customer identification and verification procedures. Ongoing monitoring of account activity. Compliance with Bank Secrecy Act and USA PATRIOT Act.
+
+Know Your Customer (KYC)
+Regular updates of customer information required. Enhanced due diligence for high-risk accounts. Beneficial ownership identification for business accounts. Source of funds verification for large deposits. Ongoing relationship monitoring.
+
+Regulatory Compliance
+Compliance with all federal banking regulations (FDIC, CFPB, OCC). State banking regulations where applicable. Fair lending practices. Equal credit opportunity. Truth in Lending Act compliance. Fair Credit Reporting Act compliance.
+
+CUSTOMER SERVICE POLICIES
+
+Service Standards
+Phone inquiries: Answered within 3 minutes average wait time. Email inquiries: Response within 24 hours. Branch appointments: Available with advance scheduling. Complaint resolution: Acknowledgment within 5 business days, resolution within 30 days.
+
+Escalation Procedures
+Level 1: Customer service representative. Level 2: Supervisor or specialist. Level 3: Department manager. Level 4: Executive office. Formal complaint process available for unresolved issues. Regulatory complaint options provided when applicable.
+
+ACCESSIBILITY POLICIES
+
+ADA Compliance
+Branches accessible to individuals with disabilities. Assistive technology available for online banking. Large print and Braille statements available upon request. Sign language interpreters available with advance notice. TTY/TDD services available for hearing impaired.
+
+Language Services
+Spanish-speaking representatives available. Translation services for other languages with advance notice. Multilingual online banking interface available. Translated documents available for common languages.
+
+CONTACT INFORMATION
+For questions about these policies or to request a copy of any policy document, please contact Customer Service at 1-800-BANK-HELP (1-800-226-5435) or visit any branch. Policy documents are also available on our website at www.bankname.com/policies.
+
+These policies are subject to change. Account holders will be notified of material changes in writing or through account statements. Current policies supersede all previous versions.
+

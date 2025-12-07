@@ -2,11 +2,14 @@
 Policy agent for the bank application.
 """
 import os
-
-from src.agents.agent_state import AgentState
-from src.utils.prompt_loader import load_prompt
+from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, AIMessage
+from src.agents.agent_state import AgentState
+from src.utils.vector_lib import get_local_index
+from src.utils.prompt_loader import load_prompt
+
+load_dotenv()
 
 
 def policy_agent(state: AgentState):
@@ -16,8 +19,14 @@ def policy_agent(state: AgentState):
     messages = state["messages"]
     user_query = messages[0].content
 
+    vector_store = get_local_index("policy")
+    retriever = vector_store.as_retriever(search_kwargs={"k": 3})
+
+    # Retrieve documents
+    retrieved_docs = retriever.invoke(user_query)
+
     prompt_template = load_prompt("policy.txt")
-    prompt = prompt_template.format(user_query=user_query)
+    prompt = prompt_template.format(user_query=user_query, retrieved_docs=retrieved_docs)
 
     response = ChatOpenAI(
         model=os.getenv("LLM_MODEL", "gpt-4o-mini"),
