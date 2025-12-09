@@ -1,3 +1,7 @@
+"""
+User query classification models.
+"""
+
 from pydantic import BaseModel
 
 

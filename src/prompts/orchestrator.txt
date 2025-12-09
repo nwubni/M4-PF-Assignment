@@ -16,13 +16,13 @@ If the user provides just a number (like "50") and there's context of a pending 
 All queries that are missing amount should default to 0.
 
 Label queries according to the following categories:
-- deposit: For money deposits
-- withdrawal: For money withdrawals
-- check_balance: For account balance inquiries
-- account_details: For account details request
-- investment: For investment related inquiries
-- faq: For frequently asked questions
-- policy: For bank policy questions
+- deposit: For money deposits (e.g., "deposit 50 dollars", "put money in my account")
+- withdrawal: For money withdrawals (e.g., "withdraw 100", "remove money from my account")
+- check_balance: For account balance inquiries (e.g., "what's my balance?", "how much money do I have?")
+- account_details: For account information requests (e.g., "show my account details", "account information")
+- investment: For investment products and portfolio questions (e.g., "investment options", "portfolio performance")
+- faq: For general banking questions and account features (e.g., "can I have multiple accounts?", "how do I open an account?", "what are the fees?", "how do I enroll in online banking?")
+- policy: For bank policies, rules, and regulations (e.g., "leave policy", "work from home policy", "employee benefits")
 
 Analyze the user's query and classify it appropriately.
 

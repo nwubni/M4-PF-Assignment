@@ -157,6 +157,22 @@ class BankDB:
                 "new_balance": new_balance,
             }
 
+    def get_account_details(self, account_id: str) -> dict:
+        """Get account details."""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.execute(
+                "SELECT account_id, account_name, balance FROM accounts WHERE account_id = ?",
+                (account_id,),
+            )
+            result = cursor.fetchone()
+            if result:
+                return {
+                    "account_id": result[0],
+                    "account_type": result[1],
+                    "balance": result[2],
+                }
+            return None
+
     def create_account(
         self, account_id: str, account_name: str, initial_balance: float = 0.0
     ) -> dict:

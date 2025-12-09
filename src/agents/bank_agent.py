@@ -2,7 +2,6 @@
 Bank operations agent for the bank application.
 """
 
-import os
 import json
 import re
 
@@ -18,6 +17,7 @@ load_dotenv()
 
 # Default account for demo purposes
 DEFAULT_ACCOUNT = "ACC001"
+db = get_bank_db()
 
 
 def bank_agent(state: AgentState):
@@ -47,22 +47,31 @@ def bank_agent(state: AgentState):
     if is_multi_query:
         # Infer operation from query text
         user_query_lower = user_query.lower()
-        if "balance" in user_query_lower or "account balance" in user_query_lower:
+
+        # Check for withdrawal first (before balance, since "remove" might not contain "balance")
+        if any(
+            word in user_query_lower
+            for word in ["withdraw", "withdrawal", "remove", "take out"]
+        ):
+            numbers = re.findall(r"\d+\.?\d*", user_query)
+            amount = float(numbers[0]) if numbers else 0
             classification = UserQueryModel(
-                category="check_balance", amount=0, followup=""
+                category="withdrawal", amount=amount, followup=""
             )
-        elif "deposit" in user_query_lower:
+        elif (
+            "deposit" in user_query_lower
+            or "add" in user_query_lower
+            or "put" in user_query_lower
+        ):
             # Extract amount from query
             numbers = re.findall(r"\d+\.?\d*", user_query)
             amount = float(numbers[0]) if numbers else 0
             classification = UserQueryModel(
                 category="deposit", amount=amount, followup=""
             )
-        elif "withdraw" in user_query_lower or "withdrawal" in user_query_lower:
-            numbers = re.findall(r"\d+\.?\d*", user_query)
-            amount = float(numbers[0]) if numbers else 0
+        elif "balance" in user_query_lower or "account balance" in user_query_lower:
             classification = UserQueryModel(
-                category="withdrawal", amount=amount, followup=""
+                category="check_balance", amount=0, followup=""
             )
         elif (
             "account details" in user_query_lower or "account info" in user_query_lower
@@ -125,52 +134,40 @@ def bank_agent(state: AgentState):
     if AgentsEnum.DEPOSIT.value in classification.category:
         amount = classification.amount
         if amount > 0:
-            # result = db.deposit(DEFAULT_ACCOUNT, amount, "User deposit")
-            # if result["success"]:
-            #     response_text = (
-            #         f"{result['message']}. New balance: ${result['new_balance']:.2f}"
-            #     )
-            # else:
-            #     response_text = result["message"]
-            response_text = f"Deposit of ${amount:.2f} has been processed successfully."
+            result = db.deposit(DEFAULT_ACCOUNT, amount, "User deposit")
+            if result["success"]:
+                response_text = f"${amount:.2f} successfully deposited."
+            else:
+                response_text = result["message"]
         else:
             # If followup was provided, it should have been shown already
             # This shouldn't happen if main.py handles followups correctly
             response_text = "Please specify the amount to deposit."
 
-        return {
-            "messages": [AIMessage(content=response_text)],
-            "next": AgentsEnum.END.value,
-        }
-
     elif AgentsEnum.WITHDRAWAL.value in classification.category:
         amount = classification.amount
         if amount > 0:
-            # Mock response for testing - replace with actual db call later
-            response_text = (
-                f"Withdrawal of ${amount:.2f} has been processed successfully."
-            )
+            result = db.withdraw(DEFAULT_ACCOUNT, amount, "User withdrawal")
+            if result["success"]:
+                response_text = f"${amount:.2f} successfully withdrawn."
+            else:
+                response_text = result["message"]
         else:
             response_text = "Please specify the amount to withdraw."
 
     elif AgentsEnum.CHECK_BALANCE.value in classification.category:
-        # Mock response for testing - replace with actual db call later
-        response_text = "Your current account balance is $1,250.75."
+        result = db.get_balance(DEFAULT_ACCOUNT)
+        if result is not None:
+            response_text = f"Your current account balance is ${result:.2f}."
+        else:
+            response_text = "Sorry, I couldn't retrieve your balance at the moment."
 
     elif AgentsEnum.ACCOUNT_DETAILS.value in classification.category:
-        # balance = db.get_balance(DEFAULT_ACCOUNT)
-        # if balance is not None:
-        #     response_text = (
-        #         f"Account ID: {DEFAULT_ACCOUNT}\nCurrent Balance: ${balance:.2f}"
-        #     )
-        # else:
-        #     return {
-        #         "messages": [
-        #             AIMessage(content=f"Account {DEFAULT_ACCOUNT} not found.")
-        #         ],
-        #         "next": AgentsEnum.ORCHESTRATOR,
-        #     }
-        response_text = "Checking bank details."
+        result = db.get_account_details(DEFAULT_ACCOUNT)
+        if result:
+            response_text = f"Account ID: {result['account_id']}\nAccount Type: {result['account_type']}\nCurrent Balance: ${result['balance']:.2f}"
+        else:
+            response_text = "Sorry, I couldn't retrieve your account details at the moment."
 
     else:
         response_text = "What banking operation would you like to perform?"

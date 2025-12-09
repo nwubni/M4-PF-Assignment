@@ -1,5 +1,12 @@
+"""
+
+Multi-query decomposition models for sub-query and multi-query processing.
+
+"""
+
+from typing import List
+
 from pydantic import BaseModel
-from typing import List, Optional
 
 
 class SubQuery(BaseModel):

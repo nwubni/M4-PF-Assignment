@@ -49,7 +49,8 @@ def orchestrator_agent(state: AgentState):
         # Collect the latest agent response (last message)
         if messages and isinstance(messages[-1], AIMessage):
             responses = result.get("responses", [])
-            responses.append(messages[-1].content)
+            response_content = messages[-1].content
+            responses.append(response_content)
             result["responses"] = responses
 
         # Check if there are more sub-queries to process

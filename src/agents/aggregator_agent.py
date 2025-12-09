@@ -17,47 +17,17 @@ def aggregator_agent(state: AgentState):
     """
     Aggregates responses from multiple agents into a single coherent response.
     """
-    messages = state["messages"]
     result = state.get("result", {})
     original_query = result.get("original_query", "")
 
-    # Collect all agent responses (skip orchestrator JSON messages)
-    agent_responses = []
-    for msg in messages:
-        if hasattr(msg, "content") and isinstance(msg, AIMessage):
-            content = msg.content
-            # Skip orchestrator messages (they contain JSON with category or is_multi_query)
-            # Also skip routing messages
-            is_orchestrator_msg = (
-                "{" in content
-                and ("category" in content or "is_multi_query" in content)
-            ) or (content in ["Routing to: bank agent..."])
+    # Get responses directly from the result state (collected by orchestrator)
+    # This avoids duplicates from message history
+    agent_responses = result.get("responses", [])
 
-            # Include all other AIMessages (these are agent responses)
-            if not is_orchestrator_msg:
-                agent_responses.append(content)
-
-    # If we have multiple responses, combine them
+    # If we have multiple responses, combine them directly
     if len(agent_responses) > 1:
-        combined_responses = "\n\n".join(
-            [f"Part {i+1}: {response}" for i, response in enumerate(agent_responses)]
-        )
-
-        # Use LLM to create a coherent combined response
-        llm = ChatOpenAI(
-            model=os.getenv("LLM_MODEL", "gpt-4o-mini"),
-            temperature=0.7,
-            max_tokens=1000,
-        )
-
-        # Load and format the aggregator prompt
-        prompt_template = load_prompt("aggregator.txt")
-        prompt = prompt_template.format(
-            original_query=original_query, combined_responses=combined_responses
-        )
-
-        final_response = llm.invoke([HumanMessage(content=prompt)])
-        response_text = final_response.content
+        # Simply join the responses with newlines - no LLM needed
+        response_text = "\n".join(agent_responses)
     elif len(agent_responses) == 1:
         # Single response, return as is
         response_text = agent_responses[0]
@@ -65,7 +35,15 @@ def aggregator_agent(state: AgentState):
         # No responses found
         response_text = "I apologize, but I couldn't process your request."
 
+    # Return only the aggregated response, clearing previous messages
+    # Get the original query from state
+    result = state.get("result", {})
+    original_query = result.get("original_query", "")
+
     return {
-        "messages": [AIMessage(content=response_text)],
+        "messages": [
+            HumanMessage(content=original_query),
+            AIMessage(content=response_text),
+        ],
         "next": "END",
     }

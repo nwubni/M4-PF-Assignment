@@ -3,6 +3,7 @@ Main file for the bank application.
 """
 
 import sys
+import json
 from pathlib import Path
 
 # Add project root to path
@@ -55,16 +56,9 @@ def create_multi_agent_system():
         },
     )
 
-    # All agents route back to orchestrator, aggregator, or END
-    # For multi-query: route to orchestrator to continue
-    # For single query: route to END
+    # Route based on the 'next' value set by agents
     def route_from_agent(state: AgentState):
-        result = state.get("result", {})
         next_value = state.get("next", "END")
-        # If it's a multi-query, always route back to orchestrator
-        if result.get("is_multi_query"):
-            return AgentsEnum.ORCHESTRATOR.value
-        # Otherwise use the next value from state, default to END
         return next_value if next_value else "END"
 
     workflow.add_conditional_edges(
@@ -129,7 +123,6 @@ def main():
 
     # Track conversation state
     pending_transaction = None  # Store {"category": "deposit", "followup": "..."}
-    conversation_messages = []  # Maintain conversation history
 
     while True:
         user_input = input("Enter your query: ")
@@ -163,7 +156,6 @@ def main():
 
         # Update conversation messages with the result
         if result.get("messages"):
-            conversation_messages = result["messages"]
             final_message = result["messages"][-1]
 
             if hasattr(final_message, "content"):
@@ -171,7 +163,6 @@ def main():
 
                 # Check if this is an orchestrator response with a followup
                 if "{" in response_content and "followup" in response_content:
-                    import json
 
                     try:
                         # Extract JSON from the response
