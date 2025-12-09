@@ -18,6 +18,7 @@ from src.agents.bank_agent import bank_agent
 from src.agents.investments_agent import investment_agent
 from src.agents.policy_agent import policy_agent
 from src.agents.faq_agent import faq_agent
+from src.agents.aggregator_agent import aggregator_agent
 
 
 def create_multi_agent_system():
@@ -32,6 +33,7 @@ def create_multi_agent_system():
     workflow.add_node(AgentsEnum.INVESTMENT.value, investment_agent)
     workflow.add_node(AgentsEnum.POLICY.value, policy_agent)
     workflow.add_node(AgentsEnum.FAQ.value, faq_agent)
+    workflow.add_node(AgentsEnum.AGGREGATOR.value, aggregator_agent)
 
     workflow.set_entry_point(AgentsEnum.ORCHESTRATOR.value)
 
@@ -48,45 +50,65 @@ def create_multi_agent_system():
             AgentsEnum.INVESTMENT.value: AgentsEnum.INVESTMENT.value,
             AgentsEnum.POLICY.value: AgentsEnum.POLICY.value,
             AgentsEnum.FAQ.value: AgentsEnum.FAQ.value,
+            AgentsEnum.AGGREGATOR.value: AgentsEnum.AGGREGATOR.value,
             "END": "__end__",
-        }
+        },
     )
 
-    # All agents route back to orchestrator or END
+    # All agents route back to orchestrator, aggregator, or END
+    # For multi-query: route to orchestrator to continue
+    # For single query: route to END
+    def route_from_agent(state: AgentState):
+        result = state.get("result", {})
+        next_value = state.get("next", "END")
+        # If it's a multi-query, always route back to orchestrator
+        if result.get("is_multi_query"):
+            return AgentsEnum.ORCHESTRATOR.value
+        # Otherwise use the next value from state, default to END
+        return next_value if next_value else "END"
+
     workflow.add_conditional_edges(
         AgentsEnum.BANK.value,
-        route_agent,
+        route_from_agent,
         {
             AgentsEnum.ORCHESTRATOR.value: AgentsEnum.ORCHESTRATOR.value,
             "END": "__end__",
-        }
+        },
     )
-    
+
     workflow.add_conditional_edges(
         AgentsEnum.INVESTMENT.value,
-        route_agent,
+        route_from_agent,
         {
             AgentsEnum.ORCHESTRATOR.value: AgentsEnum.ORCHESTRATOR.value,
             "END": "__end__",
-        }
+        },
     )
-    
+
     workflow.add_conditional_edges(
         AgentsEnum.POLICY.value,
-        route_agent,
+        route_from_agent,
         {
             AgentsEnum.ORCHESTRATOR.value: AgentsEnum.ORCHESTRATOR.value,
             "END": "__end__",
-        }
+        },
     )
-    
+
     workflow.add_conditional_edges(
         AgentsEnum.FAQ.value,
-        route_agent,
+        route_from_agent,
         {
             AgentsEnum.ORCHESTRATOR.value: AgentsEnum.ORCHESTRATOR.value,
             "END": "__end__",
-        }
+        },
+    )
+
+    workflow.add_conditional_edges(
+        AgentsEnum.AGGREGATOR.value,
+        route_agent,
+        {
+            "END": "__end__",
+        },
     )
 
     return workflow.compile()
@@ -99,17 +121,17 @@ def main():
     # Create the multi-agent system
     workflow = create_multi_agent_system()
 
-    print("="*80)
+    print("=" * 80)
     print("Welcome to the bank application")
-    print("="*80)
+    print("=" * 80)
     print("Type 'exit', 'quit', or 'q' to exit.")
-    print("="*80)
+    print("=" * 80)
 
     # Track conversation state
     pending_transaction = None  # Store {"category": "deposit", "followup": "..."}
     conversation_messages = []  # Maintain conversation history
 
-    while True:    
+    while True:
         user_input = input("Enter your query: ")
 
         if user_input.lower() in ["exit", "quit", "q"]:
@@ -118,36 +140,39 @@ def main():
         # If there's a pending transaction, enhance the query to include context
         if pending_transaction:
             import re
+
             # Extract numbers from the input (handles "50", "50 dollars", "$50", etc.)
-            numbers = re.findall(r'\d+\.?\d*', user_input)
+            numbers = re.findall(r"\d+\.?\d*", user_input)
             if numbers:
                 amount = float(numbers[0])
                 # Construct a query that includes the transaction type and amount
                 # This helps the orchestrator understand the context
-                user_input = f"I want to {pending_transaction['category']} {amount} dollars"
+                user_input = (
+                    f"I want to {pending_transaction['category']} {amount} dollars"
+                )
                 pending_transaction = None  # Clear pending transaction
             else:
                 # Even if no number, include context so orchestrator can extract amount from natural language
                 user_input = f"{pending_transaction['category']}: {user_input}"
 
-        # Add user message to conversation
-        conversation_messages.append(HumanMessage(content=user_input))
-
+        # For each new query, start fresh (don't accumulate conversation history)
+        # This prevents multi-query responses from being cached/reused
         result = workflow.invoke(
-            AgentState(messages=conversation_messages)
+            AgentState(messages=[HumanMessage(content=user_input)])
         )
 
         # Update conversation messages with the result
         if result.get("messages"):
             conversation_messages = result["messages"]
             final_message = result["messages"][-1]
-            
+
             if hasattr(final_message, "content"):
                 response_content = final_message.content
-                
+
                 # Check if this is an orchestrator response with a followup
                 if "{" in response_content and "followup" in response_content:
                     import json
+
                     try:
                         # Extract JSON from the response
                         json_start = response_content.find("{")
@@ -157,13 +182,13 @@ def main():
                             # Replace single quotes with double quotes
                             json_str = json_str.replace("'", '"')
                             classification = json.loads(json_str)
-                            
+
                             # If there's a followup question, display it and store pending transaction
                             if classification.get("followup"):
                                 print(classification["followup"])
                                 pending_transaction = {
                                     "category": classification.get("category", ""),
-                                    "followup": classification.get("followup", "")
+                                    "followup": classification.get("followup", ""),
                                 }
                             else:
                                 print(response_content)

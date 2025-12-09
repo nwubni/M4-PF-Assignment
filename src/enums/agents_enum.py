@@ -19,4 +19,5 @@ class AgentsEnum(Enum):
     POLICY = "policy"
     FAQ = "faq"
     INVESTMENT = "investment"
+    AGGREGATOR = "aggregator"
     END = "END"

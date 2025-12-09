@@ -16,4 +16,3 @@ class AgentState(TypedDict):
     messages: Annotated[Sequence[BaseMessage], operator.add]
     next: str
     result: dict
-

@@ -4,6 +4,7 @@ Bank operations agent for the bank application.
 
 import os
 import json
+import re
 
 from dotenv import load_dotenv
 from langchain_core.messages import AIMessage
@@ -25,40 +26,101 @@ def bank_agent(state: AgentState):
     """
     messages = state["messages"]
 
-    # Get the orchestrator's classification - it should be the last AIMessage before the user's message
-    orchestrator_msg = ""
-    # Look for the orchestrator's JSON response in the messages
+    # Get the user query (could be a sub-query in multi-query scenarios)
+    user_query = None
     for msg in reversed(messages):
-        if hasattr(msg, 'content') and "{" in msg.content and "category" in msg.content:
-            orchestrator_msg = msg.content
+        if hasattr(msg, "content") and not isinstance(msg, AIMessage):
+            user_query = msg.content
             break
 
-    # db = get_bank_db()
+    if not user_query:
+        user_query = messages[0].content if messages else ""
 
-    # Parse the operation from orchestrator classification
-    
-    # Strip markdown code blocks if present
-    content = orchestrator_msg.strip()
-    if content.startswith("```"):
-        content = content.split("```")[1]
-        if content.startswith("json"):
-            content = content[4:].strip()
-    
-    # Extract JSON from the content
-    json_start = content.find("{")
-    json_end = content.rfind("}") + 1
-    if json_start >= 0 and json_end > json_start:
-        content = content[json_start:json_end]
-    
-    # Replace single quotes with double quotes for valid JSON
-    content = content.replace("'", '"')
-    
-    try:
-        classification_dict = json.loads(content)
-        classification = UserQueryModel(**classification_dict)
-    except (json.JSONDecodeError, Exception) as e:
-        # Fallback if parsing fails
-        classification = UserQueryModel(category="check_balance", amount=0, followup="")
+    # Check if we're in multi-query mode
+    result = state.get("result", {})
+    is_multi_query = result.get("is_multi_query", False)
+
+    # In multi-query mode, infer operation from the sub-query text
+    # In single-query mode, parse from orchestrator's JSON classification
+    classification = None
+
+    if is_multi_query:
+        # Infer operation from query text
+        user_query_lower = user_query.lower()
+        if "balance" in user_query_lower or "account balance" in user_query_lower:
+            classification = UserQueryModel(
+                category="check_balance", amount=0, followup=""
+            )
+        elif "deposit" in user_query_lower:
+            # Extract amount from query
+            numbers = re.findall(r"\d+\.?\d*", user_query)
+            amount = float(numbers[0]) if numbers else 0
+            classification = UserQueryModel(
+                category="deposit", amount=amount, followup=""
+            )
+        elif "withdraw" in user_query_lower or "withdrawal" in user_query_lower:
+            numbers = re.findall(r"\d+\.?\d*", user_query)
+            amount = float(numbers[0]) if numbers else 0
+            classification = UserQueryModel(
+                category="withdrawal", amount=amount, followup=""
+            )
+        elif (
+            "account details" in user_query_lower or "account info" in user_query_lower
+        ):
+            classification = UserQueryModel(
+                category="account_details", amount=0, followup=""
+            )
+        else:
+            classification = UserQueryModel(
+                category="check_balance", amount=0, followup=""
+            )
+    else:
+        # Single query mode - look for orchestrator's JSON classification
+        orchestrator_msg = ""
+        for msg in reversed(messages):
+            if (
+                hasattr(msg, "content")
+                and "{" in msg.content
+                and "category" in msg.content
+            ):
+                orchestrator_msg = msg.content
+                break
+
+        if orchestrator_msg:
+            # Strip markdown code blocks if present
+            content = orchestrator_msg.strip()
+            if content.startswith("```"):
+                content = content.split("```")[1]
+                if content.startswith("json"):
+                    content = content[4:].strip()
+
+            # Replace single quotes with double quotes for valid JSON
+            content = content.replace("'", '"')
+
+            try:
+                classification_dict = json.loads(content)
+                classification = UserQueryModel(**classification_dict)
+            except (json.JSONDecodeError, Exception) as e:
+                classification = None
+
+    # If no classification found, infer from user query (for multi-query scenarios)
+    if not classification:
+        user_query_lower = user_query.lower()
+        if "balance" in user_query_lower or "account balance" in user_query_lower:
+            classification = UserQueryModel(
+                category="check_balance", amount=0, followup=""
+            )
+        elif "deposit" in user_query_lower:
+            classification = UserQueryModel(category="deposit", amount=0, followup="")
+        elif "withdraw" in user_query_lower:
+            classification = UserQueryModel(
+                category="withdrawal", amount=0, followup=""
+            )
+        else:
+            # Default to check balance
+            classification = UserQueryModel(
+                category="check_balance", amount=0, followup=""
+            )
 
     if AgentsEnum.DEPOSIT.value in classification.category:
         amount = classification.amount
@@ -84,32 +146,16 @@ def bank_agent(state: AgentState):
     elif AgentsEnum.WITHDRAWAL.value in classification.category:
         amount = classification.amount
         if amount > 0:
-            # result = db.withdraw(DEFAULT_ACCOUNT, amount, "User withdrawal")
-            # if result["success"]:
-            #     response_text = (
-            #         f"{result['message']}. New balance: ${result['new_balance']:.2f}"
-            #     )
-            # else:
-            #     response_text = result["message"]
-            response_text = f"Withdrawal of ${amount:.2f} has been processed successfully."
+            # Mock response for testing - replace with actual db call later
+            response_text = (
+                f"Withdrawal of ${amount:.2f} has been processed successfully."
+            )
         else:
             response_text = "Please specify the amount to withdraw."
 
-        return {
-            "messages": [AIMessage(content=response_text)],
-            "next": AgentsEnum.END.value,
-        }
-
     elif AgentsEnum.CHECK_BALANCE.value in classification.category:
-        # balance = db.get_balance(DEFAULT_ACCOUNT)
-        # if balance is not None:
-        #     response_text = f"Your current balance is: ${balance:.2f}"
-        # else:
-        #     return {
-        #         "messages": [AIMessage(content="Account {DEFAULT_ACCOUNT} not found.")],
-        #         "next": AgentsEnum.ORCHESTRATOR,
-        #     }
-        response_text = "Checking account balance"
+        # Mock response for testing - replace with actual db call later
+        response_text = "Your current account balance is $1,250.75."
 
     elif AgentsEnum.ACCOUNT_DETAILS.value in classification.category:
         # balance = db.get_balance(DEFAULT_ACCOUNT)
@@ -129,7 +175,19 @@ def bank_agent(state: AgentState):
     else:
         response_text = "What banking operation would you like to perform?"
 
-    return {
-        "messages": [AIMessage(content=response_text)],
-        "next": AgentsEnum.END.value,
-    }
+    # Check if this is part of a multi-query
+    result = state.get("result", {})
+    if result.get("is_multi_query"):
+        # In multi-query, return only the response and route back to orchestrator
+        # The orchestrator will manage message history
+        return {
+            "messages": [AIMessage(content=response_text)],
+            "next": AgentsEnum.ORCHESTRATOR.value,
+            "result": result,
+        }
+    else:
+        # Single query, end here
+        return {
+            "messages": [AIMessage(content=response_text)],
+            "next": AgentsEnum.END.value,
+        }

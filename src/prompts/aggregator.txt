@@ -1,0 +1,11 @@
+The user asked: "{original_query}"
+
+I received the following responses from different specialized agents. Please combine them into a single, coherent, well-organized answer that addresses all parts of the user's question:
+
+{combined_responses}
+
+IMPORTANT INSTRUCTIONS:
+1. If the agents have already processed the requested actions (e.g., "processed successfully"), report them as completed. Do NOT ask for confirmation or additional steps unless the agents explicitly indicate they need more information.
+2. Use ONLY the information provided by the agents. Do NOT add suggestions to "contact support", "check online platform", or any other generic advice.
+3. Be direct and concise. Combine the responses naturally without adding filler text or closing statements.
+4. If an agent response is complete and clear, include it as-is without embellishment.
