@@ -141,7 +141,6 @@ def bank_agent(state: AgentState):
                 response_text = result["message"]
         else:
             # If followup was provided, it should have been shown already
-            # This shouldn't happen if main.py handles followups correctly
             response_text = "Please specify the amount to deposit."
 
     elif AgentsEnum.WITHDRAWAL.value in classification.category:
