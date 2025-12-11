@@ -11,6 +11,7 @@ from langchain_core.messages import AIMessage
 from src.agents.agent_state import AgentState
 from src.database.bank_db import get_bank_db
 from src.enums.agents_enum import AgentsEnum
+from src.enums.bank_operations_enum import BankOperationsEnum
 from src.models.user_query_model import UserQueryModel
 
 load_dotenv()
@@ -56,7 +57,7 @@ def bank_agent(state: AgentState):
             numbers = re.findall(r"\d+\.?\d*", user_query)
             amount = float(numbers[0]) if numbers else 0
             classification = UserQueryModel(
-                category="withdrawal", amount=amount, followup=""
+                category=BankOperationsEnum.WITHDRAWAL, amount=amount, followup=""
             )
         elif (
             "deposit" in user_query_lower
@@ -67,21 +68,21 @@ def bank_agent(state: AgentState):
             numbers = re.findall(r"\d+\.?\d*", user_query)
             amount = float(numbers[0]) if numbers else 0
             classification = UserQueryModel(
-                category="deposit", amount=amount, followup=""
+                category=BankOperationsEnum.DEPOSIT, amount=amount, followup=""
             )
         elif "balance" in user_query_lower or "account balance" in user_query_lower:
             classification = UserQueryModel(
-                category="check_balance", amount=0, followup=""
+                category=BankOperationsEnum.BALANCE, amount=0, followup=""
             )
         elif (
             "account details" in user_query_lower or "account info" in user_query_lower
         ):
             classification = UserQueryModel(
-                category="account_details", amount=0, followup=""
+                category=BankOperationsEnum.ACCOUNT_DETAILS, amount=0, followup=""
             )
         else:
             classification = UserQueryModel(
-                category="check_balance", amount=0, followup=""
+                category=BankOperationsEnum.BALANCE, amount=0, followup=""
             )
     else:
         # Single query mode - look for orchestrator's JSON classification
@@ -115,23 +116,28 @@ def bank_agent(state: AgentState):
     # If no classification found, infer from user query (for multi-query scenarios)
     if not classification:
         user_query_lower = user_query.lower()
-        if "balance" in user_query_lower or "account balance" in user_query_lower:
+        if (
+            BankOperationsEnum.BALANCE.value in user_query_lower
+            or "account balance" in user_query_lower
+        ):
             classification = UserQueryModel(
-                category="check_balance", amount=0, followup=""
+                category=BankOperationsEnum.BALANCE, amount=0, followup=""
             )
-        elif "deposit" in user_query_lower:
-            classification = UserQueryModel(category="deposit", amount=0, followup="")
-        elif "withdraw" in user_query_lower:
+        elif BankOperationsEnum.DEPOSIT.value in user_query_lower:
             classification = UserQueryModel(
-                category="withdrawal", amount=0, followup=""
+                category=BankOperationsEnum.DEPOSIT, amount=0, followup=""
+            )
+        elif BankOperationsEnum.WITHDRAWAL.value in user_query_lower:
+            classification = UserQueryModel(
+                category=BankOperationsEnum.WITHDRAWAL, amount=0, followup=""
             )
         else:
             # Default to check balance
             classification = UserQueryModel(
-                category="check_balance", amount=0, followup=""
+                category=BankOperationsEnum.BALANCE, amount=0, followup=""
             )
 
-    if AgentsEnum.DEPOSIT.value in classification.category:
+    if BankOperationsEnum.DEPOSIT.value in classification.category:
         amount = classification.amount
         if amount > 0:
             result = db.deposit(DEFAULT_ACCOUNT, amount, "User deposit")
@@ -143,7 +149,7 @@ def bank_agent(state: AgentState):
             # If followup was provided, it should have been shown already
             response_text = "Please specify the amount to deposit."
 
-    elif AgentsEnum.WITHDRAWAL.value in classification.category:
+    elif BankOperationsEnum.WITHDRAWAL.value in classification.category:
         amount = classification.amount
         if amount > 0:
             result = db.withdraw(DEFAULT_ACCOUNT, amount, "User withdrawal")
@@ -154,19 +160,21 @@ def bank_agent(state: AgentState):
         else:
             response_text = "Please specify the amount to withdraw."
 
-    elif AgentsEnum.CHECK_BALANCE.value in classification.category:
+    elif BankOperationsEnum.BALANCE.value in classification.category:
         result = db.get_balance(DEFAULT_ACCOUNT)
         if result is not None:
             response_text = f"Your current account balance is ${result:.2f}."
         else:
             response_text = "Sorry, I couldn't retrieve your balance at the moment."
 
-    elif AgentsEnum.ACCOUNT_DETAILS.value in classification.category:
+    elif BankOperationsEnum.ACCOUNT_DETAILS.value in classification.category:
         result = db.get_account_details(DEFAULT_ACCOUNT)
         if result:
             response_text = f"Account ID: {result['account_id']}\nAccount Type: {result['account_type']}\nCurrent Balance: ${result['balance']:.2f}"
         else:
-            response_text = "Sorry, I couldn't retrieve your account details at the moment."
+            response_text = (
+                "Sorry, I couldn't retrieve your account details at the moment."
+            )
 
     else:
         response_text = "What banking operation would you like to perform?"

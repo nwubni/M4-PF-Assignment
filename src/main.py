@@ -20,6 +20,7 @@ from src.agents.investments_agent import investment_agent
 from src.agents.policy_agent import policy_agent
 from src.agents.faq_agent import faq_agent
 from src.agents.aggregator_agent import aggregator_agent
+from src.utils.tts_utils import speak_text
 
 
 def create_multi_agent_system():
@@ -121,6 +122,10 @@ def main():
     print("Type 'exit', 'quit', or 'q' to exit.")
     print("=" * 80)
 
+    # Welcome message with TTS
+    welcome_msg = "Welcome to the bank application. You can ask me about your account, investments, policies, or frequently asked questions."
+    speak_text(welcome_msg)
+
     # Track conversation state
     pending_transaction = None  # Store {"category": "deposit", "followup": "..."}
 
@@ -176,19 +181,29 @@ def main():
 
                             # If there's a followup question, display it and store pending transaction
                             if classification.get("followup"):
-                                print(classification["followup"])
+                                followup_text = classification["followup"]
+                                print(followup_text)
+                                speak_text(
+                                    followup_text
+                                )  # Read aloud for accessibility
                                 pending_transaction = {
                                     "category": classification.get("category", ""),
                                     "followup": classification.get("followup", ""),
                                 }
                             else:
                                 print(response_content)
+                                speak_text(
+                                    response_content
+                                )  # Read aloud for accessibility
                         else:
                             print(response_content)
+                            speak_text(response_content)  # Read aloud for accessibility
                     except (json.JSONDecodeError, Exception):
                         print(response_content)
+                        speak_text(response_content)  # Read aloud for accessibility
                 else:
                     print(response_content)
+                    speak_text(response_content)  # Read aloud for accessibility
             else:
                 print(result)
         else:

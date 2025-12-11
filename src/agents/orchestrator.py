@@ -14,6 +14,7 @@ from src.models.user_query_model import UserQueryModel
 from src.models.multi_query_model import MultiQueryModel
 from src.agents.agent_state import AgentState
 from src.utils.prompt_loader import load_prompt
+from src.utils.langfuse_utils import get_langfuse_callbacks
 
 # Add path for evaluator import
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -103,13 +104,19 @@ def orchestrator_agent(state: AgentState):
     multi_query_prompt_template = load_prompt("orchestrator_multi.txt")
     multi_query_prompt = multi_query_prompt_template.format(query=user_query)
 
-    llm = ChatOpenAI(
+    # Use LangFuse callbacks for monitoring multi-query detection
+    callbacks_multi = get_langfuse_callbacks(
+        trace_name="orchestrator_multi_query",
+        metadata={"agent_type": "orchestrator", "operation": "multi_query_detection"},
+    )
+    llm_multi = ChatOpenAI(
         model=os.getenv("LLM_MODEL", "gpt-4o-mini"),
         temperature=0,
         max_tokens=500,
+        callbacks=callbacks_multi,
     )
 
-    multi_response = llm.invoke([HumanMessage(content=multi_query_prompt)])
+    multi_response = llm_multi.invoke([HumanMessage(content=multi_query_prompt)])
 
     # Parse multi-query response
     multi_content = multi_response.content.strip()
@@ -155,7 +162,21 @@ def orchestrator_agent(state: AgentState):
     prompt_template = load_prompt("orchestrator.txt")
     prompt = prompt_template.format(query=user_query)
 
-    response = llm.invoke([HumanMessage(content=prompt)])
+    # Use LangFuse callbacks for single query classification
+    callbacks_single = get_langfuse_callbacks(
+        trace_name="orchestrator_single_query",
+        metadata={
+            "agent_type": "orchestrator",
+            "operation": "single_query_classification",
+        },
+    )
+    llm_single = ChatOpenAI(
+        model=os.getenv("LLM_MODEL", "gpt-4o-mini"),
+        temperature=0,
+        max_tokens=200,
+        callbacks=callbacks_single,
+    )
+    response = llm_single.invoke([HumanMessage(content=prompt)])
 
     # Parse JSON response and strip markdown code blocks if present
     content = response.content.strip()

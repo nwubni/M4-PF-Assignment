@@ -10,6 +10,7 @@ from src.agents.agent_state import AgentState
 from src.enums.agents_enum import AgentsEnum
 from src.utils.vector_lib import get_local_index
 from src.utils.prompt_loader import load_prompt
+from src.utils.langfuse_utils import get_langfuse_callbacks
 
 load_dotenv()
 
@@ -53,11 +54,16 @@ def create_rag_agent(vector_store_name: str, prompt_file: str):
             user_query=user_query, retrieved_docs=retrieved_docs
         )
 
-        # Generate response using LLM
+        # Generate response using LLM with LangFuse monitoring
+        callbacks = get_langfuse_callbacks(
+            trace_name=f"{vector_store_name}_agent",
+            metadata={"agent_type": "rag", "vector_store": vector_store_name},
+        )
         response = ChatOpenAI(
             model=os.getenv("LLM_MODEL", "gpt-4o-mini"),
             temperature=0.7,
             max_tokens=500,
+            callbacks=callbacks,
         ).invoke([HumanMessage(content=prompt)])
 
         # Check if this is part of a multi-query

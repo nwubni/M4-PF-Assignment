@@ -1,0 +1,94 @@
+{
+  "test_cases": [
+    {
+      "id": "test_001",
+      "name": "Single Query - Bank Balance Check",
+      "query": "What is my account balance?",
+      "expected_agent": "bank",
+      "expected_category": "check_balance",
+      "expected_response_contains": ["account balance", "$"],
+      "is_multi_query": false
+    },
+    {
+      "id": "test_002",
+      "name": "Single Query - Deposit Request",
+      "query": "I want to make a deposit",
+      "expected_agent": "bank",
+      "expected_category": "deposit",
+      "expected_followup": true,
+      "is_multi_query": false
+    },
+    {
+      "id": "test_003",
+      "name": "Single Query - Investment Information",
+      "query": "What investment options do you have?",
+      "expected_agent": "investment",
+      "expected_category": "investment",
+      "expected_response_contains": ["investment", "stocks", "bonds"],
+      "is_multi_query": false
+    },
+    {
+      "id": "test_004",
+      "name": "Single Query - FAQ",
+      "query": "How do I open a new account?",
+      "expected_agent": "faq",
+      "expected_category": "faq",
+      "expected_response_contains": ["account", "ID", "deposit"],
+      "is_multi_query": false
+    },
+    {
+      "id": "test_005",
+      "name": "Single Query - Policy Question",
+      "query": "What are your withdrawal limits?",
+      "expected_agent": "policy",
+      "expected_category": "policy",
+      "expected_response_contains": ["withdrawal", "limit", "ATM"],
+      "is_multi_query": false
+    },
+    {
+      "id": "test_006",
+      "name": "Multi-Query - Investment and Balance",
+      "query": "What investment options do you have, and what is my account balance?",
+      "expected_agents": ["investment", "bank"],
+      "expected_sub_queries": 2,
+      "expected_response_contains": ["investment", "account balance"],
+      "is_multi_query": true
+    },
+    {
+      "id": "test_007",
+      "name": "Multi-Query - FAQ and Policy",
+      "query": "How do I check my balance and what are your deposit policies?",
+      "expected_agents": ["bank", "faq"],
+      "expected_sub_queries": 2,
+      "expected_response_contains": ["balance", "deposit"],
+      "is_multi_query": true
+    },
+    {
+      "id": "test_008",
+      "name": "Multi-Query - Three Agents",
+      "query": "What is my balance, what investments are available, and what are your fees?",
+      "expected_agents": ["bank", "investment", "faq"],
+      "expected_sub_queries": 3,
+      "is_multi_query": true
+    },
+    {
+      "id": "test_009",
+      "name": "Deposit with Amount",
+      "query": "I want to deposit 100 dollars",
+      "expected_agent": "bank",
+      "expected_category": "deposit",
+      "expected_amount": 100.0,
+      "is_multi_query": false
+    },
+    {
+      "id": "test_010",
+      "name": "Withdrawal Request",
+      "query": "I need to withdraw money",
+      "expected_agent": "bank",
+      "expected_category": "withdrawal",
+      "expected_followup": true,
+      "is_multi_query": false
+    }
+  ]
+}
+
