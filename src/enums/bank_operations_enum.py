@@ -12,6 +12,7 @@ class BankOperationsEnum(Enum):
     WITHDRAWAL = "withdrawal"
     BALANCE = "balance"
     ACCOUNT_DETAILS = "account_details"
+    TRANSACTION_HISTORY = "transaction_history"
     UNKNOWN = "unknown"
 
     def __str__(self):

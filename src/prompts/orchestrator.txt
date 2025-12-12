@@ -20,6 +20,7 @@ Label queries according to the following categories:
 - withdrawal: For money withdrawals (e.g., "withdraw 100", "remove money from my account")
 - check_balance: For account balance inquiries (e.g., "what's my balance?", "how much money do I have?")
 - account_details: For account information requests (e.g., "show my account details", "account information")
+- transaction_history: For transaction history requests (e.g., "show my transactions", "transaction history", "recent transactions", "last 5 transactions")
 - investment: For investment products and portfolio questions (e.g., "investment options", "portfolio performance")
 - faq: For general banking questions and account features (e.g., "can I have multiple accounts?", "how do I open an account?", "what are the fees?", "how do I enroll in online banking?")
 - policy: For bank policies, rules, and regulations (e.g., "leave policy", "work from home policy", "employee benefits")

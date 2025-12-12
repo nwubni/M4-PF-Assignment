@@ -1,8 +1,10 @@
 # Accessible Banking Assistant: Voice-Enabled Multi-Agent System
 
+A Fintech company noticed the large number of visually impaired users who are unable to use their banking applications and be involved actively in financial investments and electronic money management and transactions due to accessibility issues. This number has great potential to turn the number of unbanked visually impaired users into banked users. Realizing the potential of AI, the company decided to leverage modern AI technologies to cater to the disadvantaged segment of the population and turn them into regular customers by providing them with an accessible banking assistant to enable them use their financial services like everyone else through natural human-like conversations.
+
 ## Problem Statement
 
-Traditional banking applications present significant accessibility challenges, particularly for visually impaired individuals. These applications typically rely on visual interfaces with scattered buttons, hidden menu options, and complex navigation structures that are difficult to locate or interact with using screen readers. This creates barriers that prevent visually impaired users from independently managing their banking needs, forcing them to rely on assistance from others or avoid digital banking altogether.
+Traditional Fintech applications present significant accessibility challenges, particularly for visually impaired individuals. These applications typically rely on visual interfaces with scattered buttons, hidden menu options, and complex navigation structures that are difficult to locate or interact with using screen readers. This creates barriers that prevent visually impaired users from independently managing their banking needs, forcing them to rely on assistance from others or avoid digital banking altogether.
 
 Additionally, even for sighted users, navigating through multiple menus and searching for specific functions can be cumbersome and time-consuming. The traditional button-and-menu paradigm requires users to know where to look and how to navigate, rather than simply expressing their intent naturally.
 

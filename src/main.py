@@ -133,7 +133,7 @@ def main():
 
     if voice_handler.is_voice_enabled():
         print(
-            "💡 Tip: Type 'voice' to use voice input, or just type your query normally."
+            "💡 Tip: Type 'voice' or 'v' to use voice input, or just type your query normally."
         )
 
     # Track conversation state
@@ -142,7 +142,7 @@ def main():
     while True:
         # Offer input options
         if voice_handler.is_voice_enabled():
-            user_input = input("Enter your query (or type 'voice' for voice input): ")
+            user_input = input("Enter your query (or type 'voice' or 'v' for voice input): ")
         else:
             user_input = input("Enter your query: ")
 
@@ -158,7 +158,7 @@ def main():
                 print("No voice input detected. Please try again or type your query.")
                 continue
 
-        if user_input.lower() in ["exit", "quit", "q"]:
+        if user_input.lower() in ["exit", "exit.", "quit", "quit.", "q"]:
             break
 
         # If there's a pending transaction, enhance the query to include context

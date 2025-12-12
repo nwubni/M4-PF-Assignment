@@ -173,6 +173,28 @@ class BankDB:
                 }
             return None
 
+    def get_transaction_history(self, account_id: str, limit: int = 5) -> list:
+        """Get transaction history for an account."""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.execute(
+                """SELECT transaction_id, transaction_type, amount, timestamp, description
+                   FROM transactions 
+                   WHERE account_id = ? 
+                   ORDER BY timestamp DESC 
+                   LIMIT ?""",
+                (account_id, limit),
+            )
+            transactions = []
+            for row in cursor.fetchall():
+                transactions.append({
+                    "transaction_id": row[0],
+                    "type": row[1],
+                    "amount": row[2],
+                    "timestamp": row[3],
+                    "description": row[4] or ""
+                })
+            return transactions
+
     def create_account(
         self, account_id: str, account_name: str, initial_balance: float = 0.0
     ) -> dict:

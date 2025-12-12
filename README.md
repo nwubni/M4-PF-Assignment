@@ -51,7 +51,39 @@ LANGFUSE_HOST=https://cloud.langfuse.com
 python src/main.py
 ```
 
-To quit the application, type 'exit', 'quit', or 'q'.
+## Input commands
+
+- Type 'exit', 'quit', or 'q' to quit the application.
+- Type 'voice' or 'v' to use voice input. You can also type your commands directly using text.
+
+## Disable Text-to-Speech
+- Set the environment variable `TTS_ENABLED` to `false`.
+
+## Input Examples
+- How much is my account balance?
+- Deposit 50 dollars
+- Withdraw 50 dollars
+- What are my investment options?
+- What are my bank policies?
+- What is the frequently asked question about my account?
+
+Supports multi-query input. For example:
+- Deposit 20 dollars in my bank account and show me my account balance.
+- Tell me about my investment options and show me my account balance.
+
+## Technologies used
+- OpenAI Whisper for voice input
+- OpenAI TTS for text-to-speech
+- LangChain/LangGraph for multi-agent orchestration
+- FAISS for vector store and semantic search. Needed for RAG to enable users to ask questions related to investment options and policies.
+- LangFuse for observability and performance monitoring
+- SQLite for database storage of bank account details, transactions, and account management.
+- Pydantic for data validation. Ensures data consistency and type safety.
+
+## Observability and Performance Monitoring
+Project needs to be sustainable and maintainable.
+Management needs insights on costs and performance.
+To achieve this, we will use Langfuse to monitor the application.
 
 ## Running Tests
 
@@ -86,6 +118,8 @@ python -m src.test_data.test_multi_queries
 - **Multi-Agent Queries**: Ask multiple questions in a single query
 - **Natural Language**: Express intent naturally instead of navigating menus
 - **Accessibility**: Designed for visually impaired users (text and voice support)
+- **Voice Input**: Use voice to input queries with OpenAI Whisper
+- **Text-to-Speech**: Use text-to-speech to output responses with OpenAI TTS
 
 ## Architecture
 
@@ -104,8 +138,14 @@ python -m src.test_data.test_multi_queries
 - **LangFuse**: Observability and monitoring
 - **SQLite**: Banking database
 
+Agents and Agent Role/Description
+Discuss how each agent works and how they interact.
+- Orchestrator (Tell how it works)
+- Bank Agent (Explain how it handles transactions and account operations)
+- Investment Agent (Explain how it provides investment information using RAG)
+- FAQ Agent (Explain how it answers questions using knowledge base)
+- Policy Agent (Explain bank policies)
+- Aggregator Agent (Expalain how it combines responses from multiple agents)
 ## Documentation
 
 - [Proposal](docs/proposal.md) - Project proposal and design
-- [LangFuse Setup](docs/LANGFUSE_SETUP.md) - Monitoring setup guide
-- [Test Documentation](src/test_data/README.md) - Test suite documentation
