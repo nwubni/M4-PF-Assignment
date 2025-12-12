@@ -27,20 +27,25 @@ This project implements an intelligent, multi-agent banking assistant that enabl
    - Express intent naturally instead of navigating complex menu structures
    - Multi-turn conversations that handle follow-up questions and clarifications
 
-2. **Accessibility-First Design**
+2. **Voice-Enabled Banking Operations**
+   - Perform deposits, withdrawals, balance checks, and account inquiries through conversational interactions
+   - Express intent naturally instead of navigating complex menu structures
+   - Multi-turn conversations that handle follow-up questions and clarifications
+
+3. **Accessibility-First Design**
    - **Text input**: Type banking requests naturally
    - **Audio-voice input**: Speak banking requests (planned for full implementation)
    - **Text-to-speech output**: Responses can be read aloud for visually impaired users
    - No reliance on visual buttons or menus
 
-3. **Specialized Multi-Agent Architecture**
+4. **Specialized Multi-Agent Architecture**
    - **Orchestrator Agent**: Intelligently routes user queries to appropriate specialized agents
    - **Bank Agent**: Handles transactions (deposits, withdrawals, balance checks)
    - **Investment Agent**: Provides investment information using RAG with vector search
    - **FAQ Agent**: Answers frequently asked questions using knowledge base
    - **Policy Agent**: Explains bank policies and procedures
 
-4. **Intelligent Document Understanding**
+5. **Intelligent Document Understanding**
    - Explain check content, legal documents, and other banking documents (planned feature)
    - Image-to-text capabilities for document analysis
 

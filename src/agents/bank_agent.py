@@ -57,7 +57,7 @@ def bank_agent(state: AgentState):
             numbers = re.findall(r"\d+\.?\d*", user_query)
             amount = float(numbers[0]) if numbers else 0
             classification = UserQueryModel(
-                category=BankOperationsEnum.WITHDRAWAL, amount=amount, followup=""
+                category=BankOperationsEnum.WITHDRAWAL.value, amount=amount, followup=""
             )
         elif (
             "deposit" in user_query_lower
@@ -68,21 +68,21 @@ def bank_agent(state: AgentState):
             numbers = re.findall(r"\d+\.?\d*", user_query)
             amount = float(numbers[0]) if numbers else 0
             classification = UserQueryModel(
-                category=BankOperationsEnum.DEPOSIT, amount=amount, followup=""
+                category=BankOperationsEnum.DEPOSIT.value, amount=amount, followup=""
             )
         elif "balance" in user_query_lower or "account balance" in user_query_lower:
             classification = UserQueryModel(
-                category=BankOperationsEnum.BALANCE, amount=0, followup=""
+                category=BankOperationsEnum.BALANCE.value, amount=0, followup=""
             )
         elif (
             "account details" in user_query_lower or "account info" in user_query_lower
         ):
             classification = UserQueryModel(
-                category=BankOperationsEnum.ACCOUNT_DETAILS, amount=0, followup=""
+                category=BankOperationsEnum.ACCOUNT_DETAILS.value, amount=0, followup=""
             )
         else:
             classification = UserQueryModel(
-                category=BankOperationsEnum.BALANCE, amount=0, followup=""
+                category=BankOperationsEnum.BALANCE.value, amount=0, followup=""
             )
     else:
         # Single query mode - look for orchestrator's JSON classification
@@ -121,20 +121,20 @@ def bank_agent(state: AgentState):
             or "account balance" in user_query_lower
         ):
             classification = UserQueryModel(
-                category=BankOperationsEnum.BALANCE, amount=0, followup=""
+                category=BankOperationsEnum.BALANCE.value, amount=0, followup=""
             )
         elif BankOperationsEnum.DEPOSIT.value in user_query_lower:
             classification = UserQueryModel(
-                category=BankOperationsEnum.DEPOSIT, amount=0, followup=""
+                category=BankOperationsEnum.DEPOSIT.value, amount=0, followup=""
             )
         elif BankOperationsEnum.WITHDRAWAL.value in user_query_lower:
             classification = UserQueryModel(
-                category=BankOperationsEnum.WITHDRAWAL, amount=0, followup=""
+                category=BankOperationsEnum.WITHDRAWAL.value, amount=0, followup=""
             )
         else:
             # Default to check balance
             classification = UserQueryModel(
-                category=BankOperationsEnum.BALANCE, amount=0, followup=""
+                category=BankOperationsEnum.BALANCE.value, amount=0, followup=""
             )
 
     if BankOperationsEnum.DEPOSIT.value in classification.category:

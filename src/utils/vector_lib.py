@@ -1,3 +1,7 @@
+"""
+Vector library for the application.
+"""
+
 import os
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS

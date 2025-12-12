@@ -191,4 +191,20 @@ def get_tts() -> TextToSpeech:
 
 def speak_text(text: str):
     if os.getenv("TTS_ENABLED", "true").lower() == "true":
+        # Mute voice input during TTS to prevent feedback loops
+        try:
+            from src.utils.voice_input_handler import get_voice_handler
+
+            voice_handler = get_voice_handler()
+            voice_handler.mute_listening()
+        except ImportError:
+            pass  # Voice handler not available
+
+        # Speak the text
         get_tts().speak(text)
+
+        # Unmute voice input after TTS is complete
+        try:
+            voice_handler.unmute_listening()
+        except (NameError, UnboundLocalError):
+            pass  # Voice handler not initialized

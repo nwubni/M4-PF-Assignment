@@ -21,6 +21,7 @@ from src.agents.policy_agent import policy_agent
 from src.agents.faq_agent import faq_agent
 from src.agents.aggregator_agent import aggregator_agent
 from src.utils.tts_utils import speak_text
+from src.utils.voice_input_handler import get_voice_handler, listen_for_voice_input
 
 
 def create_multi_agent_system():
@@ -126,11 +127,36 @@ def main():
     welcome_msg = "Welcome to the bank application. You can ask me about your account, investments, policies, or frequently asked questions."
     speak_text(welcome_msg)
 
+    # Initialize voice input handler
+    voice_handler = get_voice_handler()
+    print(f"Voice Status: {voice_handler.get_status()}")
+
+    if voice_handler.is_voice_enabled():
+        print(
+            "💡 Tip: Type 'voice' to use voice input, or just type your query normally."
+        )
+
     # Track conversation state
     pending_transaction = None  # Store {"category": "deposit", "followup": "..."}
 
     while True:
-        user_input = input("Enter your query: ")
+        # Offer input options
+        if voice_handler.is_voice_enabled():
+            user_input = input("Enter your query (or type 'voice' for voice input): ")
+        else:
+            user_input = input("Enter your query: ")
+
+        # Handle voice input mode
+        if voice_handler.is_voice_enabled() and user_input.lower() in ["voice", "v"]:
+            print("🎤 Voice mode activated. Please speak your command...")
+            voice_input = listen_for_voice_input(timeout=10)
+
+            if voice_input:
+                user_input = voice_input
+                print(f"You said: {user_input}")
+            else:
+                print("No voice input detected. Please try again or type your query.")
+                continue
 
         if user_input.lower() in ["exit", "quit", "q"]:
             break
