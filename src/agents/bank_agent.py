@@ -181,30 +181,34 @@ def bank_agent(state: AgentState):
                 "Sorry, I couldn't retrieve your account details at the moment."
             )
 
-    elif BankOperationsEnum.TRANSACTION_HISTORY.value in classification.category or "history" in classification.category:
+    elif (
+        BankOperationsEnum.TRANSACTION_HISTORY.value in classification.category
+        or "history" in classification.category
+    ):
         # Handle transaction history requests
         limit = 5  # Default limit
-        
+
         # Try to extract limit from query if specified
-        limit_match = re.search(r'(\d+)\s*(?:recent|last|latest)', user_query.lower())
+        limit_match = re.search(r"(\d+)\s*(?:recent|last|latest)", user_query.lower())
         if limit_match:
             limit = min(int(limit_match.group(1)), 50)  # Cap at 50 transactions
-        
+
         transactions = db.get_transaction_history(DEFAULT_ACCOUNT, limit)
-        
+
         if transactions:
             response_text = f"Here are your last {len(transactions)} transactions:\n\n"
             for i, txn in enumerate(transactions, 1):
                 # Format timestamp to be more readable
                 from datetime import datetime
+
                 try:
-                    dt = datetime.fromisoformat(txn['timestamp'])
+                    dt = datetime.fromisoformat(txn["timestamp"])
                     formatted_date = dt.strftime("%Y-%m-%d at %I:%M %p")
                 except:
-                    formatted_date = txn['timestamp']
-                
+                    formatted_date = txn["timestamp"]
+
                 amount_str = f"${txn['amount']:.2f}"
-                
+
                 response_text += f"{i}. You {transaction_words[txn['type']]} {amount_str} on {formatted_date}\n"
         else:
             response_text = "No transaction history found for your account."

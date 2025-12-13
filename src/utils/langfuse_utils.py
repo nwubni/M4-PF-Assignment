@@ -12,22 +12,25 @@ load_dotenv()
 try:
     # LangFuse 3.x uses langfuse.langchain for CallbackHandler
     from langfuse.langchain import CallbackHandler
-    from langfuse.decorators import langfuse_context, observe
+    import langfuse
 
     LANGFUSE_AVAILABLE = True
-except ImportError:
+except ImportError as e:
+    print(f"DEBUG: Failed to import from langfuse.langchain: {e}")
     # LangFuse not available or different version
     try:
         # Try older import path
         from langfuse.callback import CallbackHandler
-        from langfuse.decorators import langfuse_context, observe
+        import langfuse
 
         LANGFUSE_AVAILABLE = True
-    except ImportError:
+        print("DEBUG: LangFuse imported successfully from langfuse.callback")
+    except ImportError as e2:
+        print(f"DEBUG: Failed to import from langfuse.callback: {e2}")
         LANGFUSE_AVAILABLE = False
         CallbackHandler = None
-        langfuse_context = None
-        observe = None
+        langfuse = None
+        print("DEBUG: LangFuse not available - all imports failed")
 
 
 def get_langfuse_handler(
@@ -53,28 +56,26 @@ def get_langfuse_handler(
         return None
 
     # Check if LangFuse is configured
-    if not os.getenv("LANGFUSE_PUBLIC_KEY") or not os.getenv("LANGFUSE_SECRET_KEY"):
-        # Return None if not configured - monitoring is optional
+    public_key = os.getenv("LANGFUSE_PUBLIC_KEY")
+    secret_key = os.getenv("LANGFUSE_SECRET_KEY")
+
+    if not public_key or not secret_key:
         return None
 
     try:
-        handler = CallbackHandler(
-            public_key=os.getenv("LANGFUSE_PUBLIC_KEY"),
-            secret_key=os.getenv("LANGFUSE_SECRET_KEY"),
+        # Initialize LangFuse client first
+        langfuse.Langfuse(
+            public_key=public_key,
+            secret_key=secret_key,
             host=os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com"),
-            user_id=user_id,
-            session_id=session_id,
-            trace_name=trace_name,
         )
-        # Set metadata if provided
-        if metadata and langfuse_context is not None:
-            try:
-                langfuse_context.update_current_trace(metadata=metadata)
-            except Exception:
-                pass
+
+        # Create CallbackHandler with the initialized client
+        handler = CallbackHandler(
+            public_key=public_key, update_trace=True  # Enable trace updates
+        )
         return handler
     except Exception:
-        # Return None if handler creation fails
         return None
 
 
@@ -104,29 +105,23 @@ def set_trace_metadata(metadata: dict):
     """
     Set metadata for the current LangFuse trace.
 
+    Note: This function is currently disabled as langfuse_context is not available.
+
     Args:
         metadata: Dictionary of metadata to attach to the trace
     """
-    if not LANGFUSE_AVAILABLE or langfuse_context is None:
-        return
-    try:
-        langfuse_context.update_current_trace(metadata=metadata)
-    except Exception:
-        # Silently fail if LangFuse is not configured
-        pass
+    # Disabled - langfuse_context not available in current LangFuse version
+    pass
 
 
 def set_span_metadata(metadata: dict):
     """
     Set metadata for the current LangFuse span.
 
+    Note: This function is currently disabled as langfuse_context is not available.
+
     Args:
         metadata: Dictionary of metadata to attach to the span
     """
-    if not LANGFUSE_AVAILABLE or langfuse_context is None:
-        return
-    try:
-        langfuse_context.update_current_observation(metadata=metadata)
-    except Exception:
-        # Silently fail if LangFuse is not configured
-        pass
+    # Disabled - langfuse_context not available in current LangFuse version
+    pass

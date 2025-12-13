@@ -22,6 +22,7 @@ from src.agents.faq_agent import faq_agent
 from src.agents.aggregator_agent import aggregator_agent
 from src.utils.tts_utils import speak_text
 from src.utils.voice_input_handler import get_voice_handler, listen_for_voice_input
+from src.utils.langfuse_utils import get_langfuse_callbacks
 
 
 def create_multi_agent_system():
@@ -142,7 +143,9 @@ def main():
     while True:
         # Offer input options
         if voice_handler.is_voice_enabled():
-            user_input = input("Enter your query (or type 'voice' or 'v' for voice input): ")
+            user_input = input(
+                "Enter your query (or type 'voice' or 'v' for voice input): "
+            )
         else:
             user_input = input("Enter your query: ")
 
@@ -181,8 +184,22 @@ def main():
 
         # For each new query, start fresh (don't accumulate conversation history)
         # This prevents multi-query responses from being cached/reused
+
+        # Get LangFuse callbacks for monitoring
+        langfuse_callbacks = get_langfuse_callbacks(
+            trace_name="banking_conversation",
+            metadata={
+                "user_query": user_input,
+                "voice_enabled": voice_handler.is_voice_enabled(),
+                "has_pending_transaction": pending_transaction is not None,
+            },
+        )
+
+        # Configure workflow with LangFuse monitoring
+        config = {"callbacks": langfuse_callbacks} if langfuse_callbacks else {}
+
         result = workflow.invoke(
-            AgentState(messages=[HumanMessage(content=user_input)])
+            AgentState(messages=[HumanMessage(content=user_input)]), config=config
         )
 
         # Update conversation messages with the result

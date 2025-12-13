@@ -11,6 +11,8 @@ from src.enums.agents_enum import AgentsEnum
 from src.utils.vector_lib import get_local_index
 from src.utils.prompt_loader import load_prompt
 from src.utils.langfuse_utils import get_langfuse_callbacks
+from src.evaluator.evaluator import evaluate_rag_quality
+import langfuse
 
 load_dotenv()
 
@@ -65,6 +67,65 @@ def create_rag_agent(vector_store_name: str, prompt_file: str):
             max_tokens=500,
             callbacks=callbacks,
         ).invoke([HumanMessage(content=prompt)])
+
+        # Evaluate RAG response quality and send score to LangFuse
+        try:
+            # Prepare context from retrieved documents
+            context = "\n".join([doc.page_content for doc in retrieved_docs])
+
+            # Evaluate the response
+            evaluation = evaluate_rag_quality(
+                query=user_query, response=response.content, context=context
+            )
+
+            # Send score to LangFuse using callback handler's client
+            try:
+                if callbacks:
+                    for callback in callbacks:
+                        # Try to access the callback's client directly
+                        if hasattr(callback, "client") and callback.client:
+                            try:
+                                # Use the callback's client to score current trace
+                                callback.client.score_current_trace(
+                                    name="rag_quality",
+                                    value=evaluation["score"],
+                                    comment=evaluation["reasoning"],
+                                )
+                                callback.client.flush()
+                                break
+                            except Exception:
+                                # Try alternative method
+                                try:
+                                    callback.client.create_score(
+                                        name="rag_quality",
+                                        value=evaluation["score"],
+                                        comment=evaluation["reasoning"],
+                                    )
+                                    callback.client.flush()
+                                    break
+                                except Exception:
+                                    pass
+
+                        # Fallback: try to get langfuse instance from callback
+                        elif hasattr(callback, "langfuse") and callback.langfuse:
+                            try:
+                                callback.langfuse.score_current_trace(
+                                    name="rag_quality",
+                                    value=evaluation["score"],
+                                    comment=evaluation["reasoning"],
+                                )
+                                callback.langfuse.flush()
+                                break
+                            except Exception:
+                                pass
+
+            except Exception:
+                # If LangFuse scoring fails, continue without it
+                pass
+
+        except Exception:
+            # If evaluation fails, continue without it
+            pass
 
         # Check if this is part of a multi-query
         result = state.get("result", {})

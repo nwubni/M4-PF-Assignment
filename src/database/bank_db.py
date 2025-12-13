@@ -186,13 +186,15 @@ class BankDB:
             )
             transactions = []
             for row in cursor.fetchall():
-                transactions.append({
-                    "transaction_id": row[0],
-                    "type": row[1],
-                    "amount": row[2],
-                    "timestamp": row[3],
-                    "description": row[4] or ""
-                })
+                transactions.append(
+                    {
+                        "transaction_id": row[0],
+                        "type": row[1],
+                        "amount": row[2],
+                        "timestamp": row[3],
+                        "description": row[4] or "",
+                    }
+                )
             return transactions
 
     def create_account(

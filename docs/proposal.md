@@ -1,12 +1,16 @@
 # Accessible Banking Assistant: Voice-Enabled Multi-Agent System
 
-A Fintech company noticed the large number of visually impaired users who are unable to use their banking applications and be involved actively in financial investments and electronic money management and transactions due to accessibility issues. This number has great potential to turn the number of unbanked visually impaired users into banked users. Realizing the potential of AI, the company decided to leverage modern AI technologies to cater to the disadvantaged segment of the population and turn them into regular customers by providing them with an accessible banking assistant to enable them use their financial services like everyone else through natural human-like conversations.
-
 ## Problem Statement
 
-Traditional Fintech applications present significant accessibility challenges, particularly for visually impaired individuals. These applications typically rely on visual interfaces with scattered buttons, hidden menu options, and complex navigation structures that are difficult to locate or interact with using screen readers. This creates barriers that prevent visually impaired users from independently managing their banking needs, forcing them to rely on assistance from others or avoid digital banking altogether.
+A Fintech company identified a critical accessibility barrier in financial services. Traditional banking systems require visual navigation through complex menus and buttons, forcing customers with visual impairments to make stressful trips to physical branches for basic transactions and inquiries. This creates significant barriers that prevent visually impaired users from independently managing their banking needs, forcing them to rely on assistance from others or avoid digital banking altogether.
 
 Additionally, even for sighted users, navigating through multiple menus and searching for specific functions can be cumbersome and time-consuming. The traditional button-and-menu paradigm requires users to know where to look and how to navigate, rather than simply expressing their intent naturally.
+
+## Solution Overview
+
+This solution is a conversational AI banking assistant that services customers through both voice and text input, with support for multi-queries. The architecture includes five intelligent specialized agents with an orchestrator that understands customer needs and routes queries to specialized agents for bank transactions, investment advice, policy information, and general inquiries. Each response is automatically evaluated for quality through comprehensive monitoring and observability.
+
+This doesn't just serve customers with visual impairments; it creates truly inclusive banking for everyone by eliminating complex navigation and physical branch visits.
 
 ## Target Users
 
@@ -18,44 +22,38 @@ Additionally, even for sighted users, navigating through multiple menus and sear
 - General banking customers seeking **convenience** in expressing their banking intent through conversation rather than searching for buttons and menus
 - Users who want to perform banking operations using **text or voice** input
 
-## Solution Overview
-
-This project implements an intelligent, multi-agent banking assistant that enables users to perform banking operations through natural human-like conversations. The system supports both **text and audio-voice input**, making it fully accessible for visually impaired users while providing convenience for all users.
-
-### Key Features
+## Key Features
 
 1. **Natural Language Banking Operations**
    - Perform deposits, withdrawals, balance checks, and account inquiries through conversational interactions
    - Express intent naturally instead of navigating complex menu structures
    - Multi-turn conversations that handle follow-up questions and clarifications
+   - Support for multi-query input (e.g., "What are my investments and what is my balance?")
 
-2. **Voice-Enabled Banking Operations**
-   - Perform deposits, withdrawals, balance checks, and account inquiries through conversational interactions
-   - Express intent naturally instead of navigating complex menu structures
-   - Multi-turn conversations that handle follow-up questions and clarifications
-
-3. **Accessibility-First Design**
+2. **Accessibility-First Design**
    - **Text input**: Type banking requests naturally
-   - **Audio-voice input**: Speak banking requests (planned for full implementation)
-   - **Text-to-speech output**: Responses can be read aloud for visually impaired users
+   - **Voice input**: Speak banking requests using OpenAI Whisper for speech-to-text
+   - **Text-to-speech output**: Responses are read aloud using Google TTS (gTTS) for visually impaired users
    - No reliance on visual buttons or menus
 
-4. **Specialized Multi-Agent Architecture**
-   - **Orchestrator Agent**: Intelligently routes user queries to appropriate specialized agents
-   - **Bank Agent**: Handles transactions (deposits, withdrawals, balance checks)
+3. **Specialized Multi-Agent Architecture**
+   - **Orchestrator Agent**: Intelligently classifies user intent and routes queries to appropriate specialized agents
+   - **Bank Agent**: Handles transactions (deposits, withdrawals, balance checks, account details)
    - **Investment Agent**: Provides investment information using RAG with vector search
-   - **FAQ Agent**: Answers frequently asked questions using knowledge base
-   - **Policy Agent**: Explains bank policies and procedures
+   - **FAQ Agent**: Answers frequently asked questions using knowledge base with RAG
+   - **Policy Agent**: Explains bank policies and procedures using RAG
+   - **Aggregator Agent**: Combines responses from multiple agents for multi-part queries
 
-5. **Intelligent Document Understanding**
-   - Explain check content, legal documents, and other banking documents (planned feature)
-   - Image-to-text capabilities for document analysis
+4. **Quality Assurance and Monitoring**
+   - Automatic quality evaluation through LangFuse observability
+   - LLM call tracking and performance analytics
+   - Comprehensive monitoring of agent behavior and response quality
 
 ## Value Proposition
 
 ### For Visually Impaired Users
-- **Independence**: Perform banking transactions without visual assistance
-- **Accessibility**: Voice-enabled interface eliminates barriers
+- **Independence**: Perform banking transactions without visual assistance or stressful branch visits
+- **Accessibility**: Voice-enabled interface eliminates barriers to digital banking
 - **Natural Interaction**: Use natural language instead of memorizing menu structures
 - **Comprehensive Support**: Access to all banking services (transactions, investments, FAQs, policies)
 
@@ -64,6 +62,7 @@ This project implements an intelligent, multi-agent banking assistant that enabl
 - **Efficiency**: Faster transaction processing through conversation
 - **User-Friendly**: No need to learn complex application navigation
 - **Multi-Modal**: Support for both text and voice input
+- **Inclusive Banking**: Eliminates the need for physical branch visits for routine inquiries
 
 ## Success Criteria
 
@@ -72,11 +71,12 @@ This project implements an intelligent, multi-agent banking assistant that enabl
    - Complete banking transactions (deposits, withdrawals) through conversation
    - Provide accurate information about investments, FAQs, and policies
    - Handle multi-turn conversations with follow-up questions
+   - Support multi-query input spanning multiple agents
 
 2. **Accessibility Requirements**
    - Support text input for banking operations
-   - Support audio-voice input for banking operations (planned)
-   - Provide text-to-speech output for responses (planned)
+   - Support voice input for banking operations using OpenAI Whisper
+   - Provide text-to-speech output for responses using Google TTS
    - No dependency on visual interface elements
 
 3. **Quality Requirements**
@@ -84,6 +84,7 @@ This project implements an intelligent, multi-agent banking assistant that enabl
    - Relevant and contextually appropriate responses
    - Robust error handling and validation
    - Production-ready code quality
+   - Comprehensive monitoring and observability
 
 ## Technical Approach
 
@@ -92,13 +93,16 @@ This project implements an intelligent, multi-agent banking assistant that enabl
 The system uses a **multi-agent orchestration pattern** where specialized agents collaborate to handle different aspects of banking operations:
 
 1. **Orchestrator Agent**: 
-   - Classifies user intent using LLM
+   - Classifies user intent using LLM with Pydantic validation
+   - Detects and decomposes multi-part queries
    - Routes queries to appropriate specialized agents
-   - Manages conversation flow
+   - Manages conversation flow and state
 
 2. **Specialized Agents**:
    - Each agent handles a specific domain (banking, investments, FAQs, policies)
-   - Agents use RAG (Retrieval-Augmented Generation) with vector stores for knowledge-based responses
+   - Investment, FAQ, and Policy agents use RAG (Retrieval-Augmented Generation) with FAISS vector stores for knowledge-based responses
+   - Bank Agent handles transaction logic and database operations
+   - Aggregator Agent combines responses from multiple agents for multi-part queries
    - Agents can request follow-up information when needed
 
 ### Technologies Integrated
@@ -107,27 +111,33 @@ The system uses a **multi-agent orchestration pattern** where specialized agents
    - Multi-agent orchestration and workflow management
    - Agent state management and routing
    - Message passing between agents
+   - Conditional workflows based on agent responses
 
 2. **Vector Store (FAISS)**
    - Semantic search for investment information
    - FAQ knowledge base retrieval
    - Policy document search
-   - Enables contextually relevant responses
+   - Enables contextually relevant responses through RAG
 
 3. **Pydantic**
    - Data validation for user queries
-   - Structured data models for agent communication
+   - Structured data models for agent communication (`UserQueryModel`, `MultiQueryModel`)
    - Type safety and error handling
 
-4. **Langfuse** (planned)
+4. **LangFuse**
    - Observability and monitoring
-   - LLM call tracking
-   - Performance analytics
+   - LLM call tracking and performance analytics
+   - Automatic quality evaluation through trace analysis
+   - Cost and performance insights
 
-5. **Audio Processing** (planned)
-   - Speech-to-Text for voice input
-   - Text-to-Speech for voice output
+5. **Audio Processing**
+   - **OpenAI Whisper**: Speech-to-Text for voice input
+   - **Google TTS (gTTS)**: Text-to-Speech for voice output
    - Multi-modal input handling
+
+6. **SQLite**
+   - Database for bank account details, transactions, and account management
+   - Transaction history tracking
 
 ### Design Decisions
 
@@ -136,23 +146,32 @@ The system uses a **multi-agent orchestration pattern** where specialized agents
 - **Scalability**: Easy to add new specialized agents without affecting existing ones
 - **Maintainability**: Clear separation of concerns makes the system easier to maintain and debug
 - **Performance**: Specialized agents with domain-specific knowledge bases provide more accurate responses
+- **Context Management**: Prevents context overload by routing to specialized agents rather than loading all knowledge into a single agent
 
 **Why Vector Store for RAG?**
 - Enables semantic search across large knowledge bases (investment products, FAQs, policies)
 - Provides contextually relevant information to LLM responses
 - Allows for easy updates to knowledge bases without retraining models
+- Reduces token usage by retrieving only relevant context
 
 **Why LangGraph for Orchestration?**
 - Provides robust state management for multi-turn conversations
 - Enables complex routing logic between agents
 - Supports conditional workflows based on agent responses
+- Manages multi-query decomposition and response aggregation
+
+**Why Automatic Quality Evaluation?**
+- Ensures production-ready responses through comprehensive monitoring
+- Provides insights into system performance and costs
+- Enables continuous improvement through observability
+- Supports sustainable and maintainable system operations
 
 ## Future Enhancements
 
-1. **Full Audio Support**
-   - Complete speech-to-text integration
-   - Text-to-speech for all responses
-   - Voice command recognition
+1. **Enhanced Audio Support**
+   - Voice authentication
+   - Transaction confirmation via voice
+   - Improved TTS quality and customization
 
 2. **Document Analysis**
    - Image-to-text for check processing
@@ -160,15 +179,16 @@ The system uses a **multi-agent orchestration pattern** where specialized agents
    - Receipt and statement analysis
 
 3. **Enhanced Security**
-   - Voice authentication
-   - Transaction confirmation via voice
    - Secure multi-factor authentication
+   - Voice biometric authentication
+   - Transaction verification workflows
 
 4. **Advanced Features**
    - Multi-language support
    - Personalized recommendations
-   - Transaction history analysis
+   - Transaction history analysis and insights
+   - Proactive financial advice
 
 ## Conclusion
 
-This project addresses a critical accessibility gap in banking applications while providing enhanced convenience for all users. By combining multi-agent AI architecture with natural language processing and voice capabilities, we create a banking assistant that is both powerful and accessible, enabling visually impaired individuals to independently manage their banking needs through natural conversation.
+This project addresses a critical accessibility gap in banking applications while providing enhanced convenience for all users. By combining multi-agent AI architecture with natural language processing and voice capabilities, we create a banking assistant that is both powerful and accessible. The solution doesn't just serve customers with visual impairments; it creates truly inclusive banking for everyone by eliminating complex navigation and physical branch visits, enabling all users to independently manage their banking needs through natural conversation.
