@@ -226,27 +226,23 @@ def main():
                             if classification.get("followup"):
                                 followup_text = classification["followup"]
                                 print(followup_text)
-                                speak_text(
-                                    followup_text
-                                )  # Read aloud for accessibility
+                                speak_text(followup_text)
                                 pending_transaction = {
                                     "category": classification.get("category", ""),
                                     "followup": classification.get("followup", ""),
                                 }
                             else:
                                 print(response_content)
-                                speak_text(
-                                    response_content
-                                )  # Read aloud for accessibility
+                                speak_text(response_content)
                         else:
                             print(response_content)
-                            speak_text(response_content)  # Read aloud for accessibility
+                            speak_text(response_content)
                     except (json.JSONDecodeError, Exception):
                         print(response_content)
-                        speak_text(response_content)  # Read aloud for accessibility
+                        speak_text(response_content)
                 else:
                     print(response_content)
-                    speak_text(response_content)  # Read aloud for accessibility
+                    speak_text(response_content)
             else:
                 print(result)
         else:

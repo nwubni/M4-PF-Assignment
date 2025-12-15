@@ -20,10 +20,9 @@ warnings.filterwarnings(
 
 load_dotenv()
 
-# Try to import OpenAI Whisper
+# Import OpenAI Whisper
 try:
     import whisper
-    import torch
 
     WHISPER_AVAILABLE = True
 except ImportError:
@@ -32,7 +31,7 @@ except ImportError:
         "Warning: OpenAI Whisper not installed. Install with: pip install openai-whisper"
     )
 
-# Try to import pyaudio for microphone access
+# Import pyaudio for microphone access
 try:
     import pyaudio
 

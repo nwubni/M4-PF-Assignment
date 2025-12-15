@@ -35,7 +35,7 @@ def aggregator_agent(state: AgentState):
         # No responses found
         response_text = "I apologize, but I couldn't process your request."
 
-    # Return only the aggregated response, clearing previous messages
+    # Return only the aggregated response and clear previous messages
     # Get the original query from state
     result = state.get("result", {})
     original_query = result.get("original_query", "")

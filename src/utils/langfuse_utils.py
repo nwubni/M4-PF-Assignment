@@ -8,9 +8,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Try to import LangFuse - make it optional
+# Import LangFuse with fallback handling
 try:
-    # LangFuse 3.x uses langfuse.langchain for CallbackHandler
     from langfuse.langchain import CallbackHandler
     import langfuse
 
@@ -19,7 +18,7 @@ except ImportError as e:
     print(f"DEBUG: Failed to import from langfuse.langchain: {e}")
     # LangFuse not available or different version
     try:
-        # Try older import path
+        # Fallback to older import path
         from langfuse.callback import CallbackHandler
         import langfuse
 
@@ -99,29 +98,3 @@ def get_langfuse_callbacks(
     """
     handler = get_langfuse_handler(user_id, session_id, trace_name, metadata)
     return [handler] if handler else []
-
-
-def set_trace_metadata(metadata: dict):
-    """
-    Set metadata for the current LangFuse trace.
-
-    Note: This function is currently disabled as langfuse_context is not available.
-
-    Args:
-        metadata: Dictionary of metadata to attach to the trace
-    """
-    # Disabled - langfuse_context not available in current LangFuse version
-    pass
-
-
-def set_span_metadata(metadata: dict):
-    """
-    Set metadata for the current LangFuse span.
-
-    Note: This function is currently disabled as langfuse_context is not available.
-
-    Args:
-        metadata: Dictionary of metadata to attach to the span
-    """
-    # Disabled - langfuse_context not available in current LangFuse version
-    pass

@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Try to import gTTS
+# Import gTTS
 try:
     from gtts import gTTS
 
@@ -23,7 +23,7 @@ except ImportError:
     GTTS_AVAILABLE = False
     print("Warning: gTTS not installed. Install with: pip install gtts")
 
-# Try pygame as primary audio player
+# Import pygame as primary audio player
 try:
     # Suppress pygame warnings and messages
     os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"

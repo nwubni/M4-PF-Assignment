@@ -188,7 +188,7 @@ def bank_agent(state: AgentState):
         # Handle transaction history requests
         limit = 5  # Default limit
 
-        # Try to extract limit from query if specified
+        # Extract limit from query if specified
         limit_match = re.search(r"(\d+)\s*(?:recent|last|latest)", user_query.lower())
         if limit_match:
             limit = min(int(limit_match.group(1)), 50)  # Cap at 50 transactions

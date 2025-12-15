@@ -12,7 +12,6 @@ from src.utils.vector_lib import get_local_index
 from src.utils.prompt_loader import load_prompt
 from src.utils.langfuse_utils import get_langfuse_callbacks
 from src.evaluator.evaluator import evaluate_rag_quality
-import langfuse
 
 load_dotenv()
 
@@ -82,7 +81,7 @@ def create_rag_agent(vector_store_name: str, prompt_file: str):
             try:
                 if callbacks:
                     for callback in callbacks:
-                        # Try to access the callback's client directly
+                        # Access the callback's client directly
                         if hasattr(callback, "client") and callback.client:
                             try:
                                 # Use the callback's client to score current trace
@@ -94,7 +93,7 @@ def create_rag_agent(vector_store_name: str, prompt_file: str):
                                 callback.client.flush()
                                 break
                             except Exception:
-                                # Try alternative method
+                                # Alternative method
                                 try:
                                     callback.client.create_score(
                                         name="rag_quality",
