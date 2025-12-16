@@ -298,5 +298,3 @@ The test suite validates:
 ## Documentation
 
 - [Proposal](docs/proposal.md) - Project proposal and design
-- [LangFuse Setup](docs/LANGFUSE_SETUP.md) - LangFuse integration guide
-- [Test Data README](src/test_data/README.md) - Testing documentation
