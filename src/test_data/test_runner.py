@@ -5,8 +5,8 @@ Test runner for the bank application using golden data.
 import sys
 import json
 from pathlib import Path
-from typing import Dict, List, Any
-from langchain_core.messages import HumanMessage, AIMessage
+from typing import Dict, Any
+from langchain_core.messages import HumanMessage
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent

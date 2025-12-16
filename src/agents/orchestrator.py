@@ -7,7 +7,7 @@ import sys
 import json
 
 from dotenv import load_dotenv
-from langchain_core.messages import AIMessage, HumanMessage, BaseMessage
+from langchain_core.messages import AIMessage, HumanMessage
 
 from langchain_openai import ChatOpenAI
 from src.models.user_query_model import UserQueryModel

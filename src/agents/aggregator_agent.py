@@ -2,13 +2,10 @@
 Aggregator agent that combines responses from multiple agents for multi-part queries.
 """
 
-import json
-from langchain_core.messages import AIMessage, HumanMessage
-from langchain_openai import ChatOpenAI
-from src.agents.agent_state import AgentState
-from src.utils.prompt_loader import load_prompt
-import os
 from dotenv import load_dotenv
+from langchain_core.messages import AIMessage, HumanMessage
+
+from src.agents.agent_state import AgentState
 
 load_dotenv()
 

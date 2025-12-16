@@ -4,11 +4,9 @@ Includes audio management to prevent feedback loops with TTS.
 """
 
 import os
-import threading
-import time
 import tempfile
 import wave
-from typing import Optional, Callable
+from typing import Optional
 import warnings
 
 from dotenv import load_dotenv

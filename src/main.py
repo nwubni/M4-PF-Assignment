@@ -203,50 +203,54 @@ def main():
         )
 
         # Update conversation messages with the result
-        if result.get("messages"):
-            final_message = result["messages"][-1]
-
-            if hasattr(final_message, "content"):
-                response_content = final_message.content
-
-                # Check if this is an orchestrator response with a followup
-                if "{" in response_content and "followup" in response_content:
-
-                    try:
-                        # Extract JSON from the response
-                        json_start = response_content.find("{")
-                        json_end = response_content.rfind("}") + 1
-                        if json_start >= 0 and json_end > json_start:
-                            json_str = response_content[json_start:json_end]
-                            # Replace single quotes with double quotes
-                            json_str = json_str.replace("'", '"')
-                            classification = json.loads(json_str)
-
-                            # If there's a followup question, display it and store pending transaction
-                            if classification.get("followup"):
-                                followup_text = classification["followup"]
-                                print(followup_text)
-                                speak_text(followup_text)
-                                pending_transaction = {
-                                    "category": classification.get("category", ""),
-                                    "followup": classification.get("followup", ""),
-                                }
-                            else:
-                                print(response_content)
-                                speak_text(response_content)
-                        else:
-                            print(response_content)
-                            speak_text(response_content)
-                    except (json.JSONDecodeError, Exception):
-                        print(response_content)
-                        speak_text(response_content)
-                else:
-                    print(response_content)
-                    speak_text(response_content)
-            else:
-                print(result)
-        else:
+        if not result.get("messages"):
             print(result)
+            continue
+
+        final_message = result["messages"][-1]
+
+        if not hasattr(final_message, "content"):
+            print(result)
+            continue
+
+        response_content = final_message.content
+
+        # Check if this is an orchestrator response with a followup
+        if not ("{" in response_content and "followup" in response_content):
+            print(response_content)
+            speak_text(response_content)
+            continue
+
+        # Try to parse JSON from response
+        try:
+            json_start = response_content.find("{")
+            json_end = response_content.rfind("}") + 1
+
+            if json_start < 0 or json_end <= json_start:
+                print(response_content)
+                speak_text(response_content)
+                continue
+
+            json_str = response_content[json_start:json_end]
+            json_str = json_str.replace("'", '"')
+            classification = json.loads(json_str)
+
+            # Handle followup question
+            if classification.get("followup"):
+                followup_text = classification["followup"]
+                print(followup_text)
+                speak_text(followup_text)
+                pending_transaction = {
+                    "category": classification.get("category", ""),
+                    "followup": classification.get("followup", ""),
+                }
+            else:
+                print(response_content)
+                speak_text(response_content)
+
+        except (json.JSONDecodeError, Exception):
+            print(response_content)
+            speak_text(response_content)
 
 
 if __name__ == "__main__":

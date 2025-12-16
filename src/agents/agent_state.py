@@ -2,10 +2,11 @@
 Agent state for the bank application.
 """
 
-from typing import Annotated, TypedDict
 import operator
-from langchain_core.messages import BaseMessage
+from typing import Annotated, TypedDict
 from typing import Sequence
+
+from langchain_core.messages import BaseMessage
 
 
 class AgentState(TypedDict):

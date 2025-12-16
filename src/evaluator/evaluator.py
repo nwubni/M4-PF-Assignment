@@ -1,4 +1,3 @@
-# src/evaluators/rag_quality_evaluator.py
 """
 LangFuse evaluator for RAG response quality scoring.
 """

@@ -82,6 +82,10 @@ python src/main.py
 - Deposit 20 dollars in my bank account and show me my account balance.
 - What investment options do you have, and can I have multiple accounts?
 
+## Key Assumptions
+- **Moderation**: Has been fully implemented for user input and system responses
+- **Caching**: Is available to reduce latency for repeated queries
+
 ## Features
 
 - **Bank Operations**: Deposit, withdraw, check balance, view account details
@@ -197,23 +201,23 @@ Instead of loading all knowledge (banking operations, investments, FAQs, policie
 Agents collaborate through a coordinated workflow managed by LangGraph:
 
 ### Single Query Flow
-1. **User Input** → Orchestrator receives the query
-2. **Classification** → Orchestrator classifies the query using LLM and Pydantic validation
-3. **Routing** → Orchestrator routes to the appropriate specialized agent
-4. **Processing** → Specialized agent processes the query (using RAG if applicable)
-5. **Response** → Agent returns response directly to the user
+1. **User Input** - Orchestrator receives the query
+2. **Classification** - Orchestrator classifies the query using LLM and Pydantic validation
+3. **Routing** - Orchestrator routes to the appropriate specialized agent
+4. **Processing** - Specialized agent processes the query (using RAG if applicable)
+5. **Response** - Agent returns response directly to the user
 
 ### Multi-Query Flow
-1. **User Input** → Orchestrator receives a complex query (e.g., "What are my investments and what is my balance?")
-2. **Multi-Query Detection** → Orchestrator detects multiple intents using `MultiQueryModel`
-3. **Query Decomposition** → Orchestrator splits the query into sub-queries:
-   - Sub-query 1: "What are my investments?" → Investment Agent
-   - Sub-query 2: "What is my balance?" → Bank Agent
-4. **Sequential Processing** → Orchestrator routes to each agent sequentially, collecting responses
-5. **State Management** → Responses are stored in the workflow state
-6. **Aggregation** → Orchestrator routes to Aggregator Agent with all collected responses
-7. **Combined Response** → Aggregator combines responses into a single coherent answer
-8. **Final Response** → User receives the aggregated response
+1. **User Input** - Orchestrator receives a complex query (e.g., "What are my investments and what is my balance?")
+2. **Multi-Query Detection** - Orchestrator detects multiple intents using `MultiQueryModel`
+3. **Query Decomposition** - Orchestrator splits the query into sub-queries:
+   - Sub-query 1: "What are my investments?" - Investment Agent
+   - Sub-query 2: "What is my balance?" - Bank Agent
+4. **Sequential Processing** - Orchestrator routes to each agent sequentially, collecting responses
+5. **State Management** - Responses are stored in the workflow state
+6. **Aggregation** - Orchestrator routes to Aggregator Agent with all collected responses
+7. **Combined Response** - Aggregator combines responses into a single coherent answer
+8. **Final Response** - User receives the aggregated response
 
 ### State Management
 - LangGraph's `AgentState` maintains conversation state across agent transitions

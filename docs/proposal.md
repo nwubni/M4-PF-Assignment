@@ -186,7 +186,6 @@ The system uses a **multi-agent orchestration pattern** where specialized agents
 4. **Advanced Features**
    - Multi-language support
    - Personalized recommendations
-   - Transaction history analysis and insights
    - Proactive financial advice
 
 ## Conclusion
