@@ -1,5 +1,4 @@
-# M4-PF-Assignment
-Andela GenAI Fourth Assignment
+# AI Voice/Text Banking Assistant
 
 ## Overview
 
